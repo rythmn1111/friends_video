@@ -43,7 +43,7 @@ const rooms = new Map<string, Room>()
 const peerToRoom = new Map<WebSocket, string>()
 const peerById = new Map<string, Peer>()
 
-const PORT = 3001
+const PORT = 3002
 
 const server = Bun.serve<{ peerId: string }>({
   port: PORT,
