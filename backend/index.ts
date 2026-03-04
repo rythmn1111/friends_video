@@ -18,11 +18,22 @@ interface Room {
   peers: Map<string, Peer>
 }
 
+interface SDP {
+  type: string
+  sdp?: string
+}
+
+interface IceCandidate {
+  candidate: string
+  sdpMid?: string | null
+  sdpMLineIndex?: number | null
+}
+
 type SignalMessage =
   | { type: 'join'; roomId: string; peerId: string; name: string }
-  | { type: 'offer'; to: string; from: string; sdp: RTCSessionDescriptionInit }
-  | { type: 'answer'; to: string; from: string; sdp: RTCSessionDescriptionInit }
-  | { type: 'ice-candidate'; to: string; from: string; candidate: RTCIceCandidateInit }
+  | { type: 'offer'; to: string; from: string; sdp: SDP }
+  | { type: 'answer'; to: string; from: string; sdp: SDP }
+  | { type: 'ice-candidate'; to: string; from: string; candidate: IceCandidate }
   | { type: 'peer-joined'; peerId: string; name: string }
   | { type: 'peer-left'; peerId: string; name: string }
   | { type: 'room-peers'; peers: Array<{ id: string; name: string }> }
