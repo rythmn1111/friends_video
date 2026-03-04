@@ -1,0 +1,9 @@
+{
+  "name": "friends-video-backend",
+  "version": "1.0.0",
+  "description": "WebRTC signaling server for friends-video",
+  "scripts": {
+    "start": "bun run index.ts",
+    "dev": "bun --watch index.ts"
+  }
+}

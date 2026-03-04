@@ -1,5 +1,7 @@
 node_modules/
-out/
-dist/
+frontend/node_modules/
+backend/node_modules/
+frontend/out/
+frontend/dist/
 *.local
 .DS_Store
