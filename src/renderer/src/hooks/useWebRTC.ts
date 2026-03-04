@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { Peer, SignalMessage, DataChannelMessage, Task } from '../types'
 
-const SIGNAL_URL = 'ws://localhost:3001/signal'
+const DEFAULT_SIGNAL_URL = 'ws://localhost:3001/signal'
 
 const ICE_SERVERS: RTCIceServer[] = [
   { urls: 'stun:stun.l.google.com:19302' },
-  { urls: 'stun:stun1.l.google.com:19302' }
+  { urls: 'stun:stun1.l.google.com:19302' },
+  { urls: 'stun:stun2.l.google.com:19302' },
+  { urls: 'stun:stun3.l.google.com:19302' }
 ]
 
 interface PeerConnection {
@@ -185,7 +187,7 @@ export function useWebRTC(options: UseWebRTCOptions) {
   )
 
   const connect = useCallback(
-    async (roomId: string, name: string) => {
+    async (roomId: string, name: string, serverUrl: string = DEFAULT_SIGNAL_URL) => {
       setConnectionState('connecting')
 
       // Get local media
@@ -211,7 +213,7 @@ export function useWebRTC(options: UseWebRTCOptions) {
       setMyName(name)
 
       // Connect to signaling server
-      const ws = new WebSocket(SIGNAL_URL)
+      const ws = new WebSocket(serverUrl)
       wsRef.current = ws
 
       ws.onopen = () => {

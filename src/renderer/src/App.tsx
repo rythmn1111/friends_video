@@ -79,8 +79,8 @@ export default function App() {
   const taskCallbacks = useRef({ syncTasks, receiveAdd, receiveUpdate, receiveDelete })
   taskCallbacks.current = { syncTasks, receiveAdd, receiveUpdate, receiveDelete }
 
-  const handleJoin = async (name: string, roomId: string) => {
-    await connect(roomId, name)
+  const handleJoin = async (name: string, roomId: string, serverUrl: string) => {
+    await connect(roomId, name, serverUrl)
     setInCall(true)
   }
 

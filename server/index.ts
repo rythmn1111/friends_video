@@ -36,6 +36,7 @@ const PORT = 3001
 
 const server = Bun.serve<{ peerId: string }>({
   port: PORT,
+  hostname: '0.0.0.0', // listen on all interfaces, not just localhost
   fetch(req, server) {
     const url = new URL(req.url)
     if (url.pathname === '/signal') {
@@ -147,4 +148,17 @@ const server = Bun.serve<{ peerId: string }>({
   }
 })
 
-console.log(`Signaling server running on ws://localhost:${PORT}/signal`)
+import { networkInterfaces } from 'os'
+const nets = networkInterfaces()
+const localIPs: string[] = []
+for (const ifaces of Object.values(nets)) {
+  for (const iface of ifaces ?? []) {
+    if (iface.family === 'IPv4' && !iface.internal) localIPs.push(iface.address)
+  }
+}
+console.log(`\nSignaling server running on port ${PORT}`)
+console.log(`Local:   ws://localhost:${PORT}/signal`)
+for (const ip of localIPs) {
+  console.log(`Network: ws://${ip}:${PORT}/signal  ← share this with friends on the same WiFi`)
+}
+console.log()

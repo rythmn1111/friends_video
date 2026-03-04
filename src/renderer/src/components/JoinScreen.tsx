@@ -1,23 +1,24 @@
 import { useState } from 'react'
 
 interface JoinScreenProps {
-  onJoin: (name: string, roomId: string) => void
+  onJoin: (name: string, roomId: string, serverUrl: string) => void
 }
 
 export function JoinScreen({ onJoin }: JoinScreenProps) {
   const [name, setName] = useState('')
   const [roomId, setRoomId] = useState('')
+  const [serverUrl, setServerUrl] = useState('ws://localhost:3001/signal')
   const [mode, setMode] = useState<'create' | 'join'>('create')
+  const [showAdvanced, setShowAdvanced] = useState(false)
 
-  const generatedRoom = () => Math.random().toString(36).slice(2, 8).toUpperCase()
-  const [newRoomId] = useState(generatedRoom)
+  const [newRoomId] = useState(() => Math.random().toString(36).slice(2, 8).toUpperCase())
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!name.trim()) return
     const room = mode === 'create' ? newRoomId : roomId.trim().toUpperCase()
     if (!room) return
-    onJoin(name.trim(), room)
+    onJoin(name.trim(), room, serverUrl.trim())
   }
 
   return (
@@ -71,7 +72,9 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
 
             {mode === 'create' ? (
               <div>
-                <label className="block text-xs font-medium text-gray-400 mb-1.5">Room code</label>
+                <label className="block text-xs font-medium text-gray-400 mb-1.5">
+                  Room code — share this with friends
+                </label>
                 <div className="flex gap-2 items-center bg-white/5 border border-white/10 rounded-xl px-4 py-2.5">
                   <span className="text-white font-mono font-semibold tracking-widest text-lg flex-1">
                     {newRoomId}
@@ -84,7 +87,6 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
                     Copy
                   </button>
                 </div>
-                <p className="text-xs text-gray-600 mt-1">Share this code with your friends</p>
               </div>
             ) : (
               <div>
@@ -100,6 +102,34 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
               </div>
             )}
 
+            {/* Advanced: server URL */}
+            <div>
+              <button
+                type="button"
+                onClick={() => setShowAdvanced((v) => !v)}
+                className="text-xs text-gray-500 hover:text-gray-300 transition-colors flex items-center gap-1"
+              >
+                <span>{showAdvanced ? '▾' : '▸'}</span>
+                Advanced (server URL)
+              </button>
+              {showAdvanced && (
+                <div className="mt-2">
+                  <input
+                    type="text"
+                    value={serverUrl}
+                    onChange={(e) => setServerUrl(e.target.value)}
+                    placeholder="ws://localhost:3001/signal"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-500 outline-none focus:border-violet-500 transition-colors text-sm font-mono"
+                  />
+                  <p className="text-xs text-gray-600 mt-1">
+                    Everyone in the call must use the same server URL.
+                    Run <code className="text-gray-400">bun run server</code> on one machine and
+                    enter its IP here — e.g. <code className="text-gray-400">ws://192.168.1.5:3001/signal</code>
+                  </p>
+                </div>
+              )}
+            </div>
+
             <button
               type="submit"
               disabled={!name.trim() || (mode === 'join' && !roomId.trim())}
@@ -111,7 +141,7 @@ export function JoinScreen({ onJoin }: JoinScreenProps) {
         </div>
 
         <p className="text-center text-xs text-gray-600 mt-4">
-          Make sure the signaling server is running on port 3001
+          One person runs <code className="text-gray-500">bun run server</code> and shares their IP
         </p>
       </div>
     </div>
